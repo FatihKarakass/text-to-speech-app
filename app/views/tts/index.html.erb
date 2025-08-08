@@ -1,0 +1,198 @@
+<!-- Hero Section -->
+<div class="row mb-5">
+  <div class="col-12">
+    <div class="text-center py-5 bg-white rounded-3 shadow-sm">
+      <i class="fas fa-microphone-alt text-primary mb-3" style="font-size: 3rem;"></i>
+      <h1 class="display-4 text-primary mb-3">Enterprise TTS Platform</h1>
+      <p class="lead text-muted">3 TTS sağlayıcısı ile ses dosyası üretin - Resemble AI, ElevenLabs, OpenAI</p>
+    </div>
+  </div>
+</div>
+
+<!-- Enterprise TTS Form -->
+<div class="row">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h3 class="card-title mb-0">
+          <i class="fas fa-cloud me-2"></i>
+          Enterprise TTS - 3 Provider Generation
+        </h3>
+      </div>
+      <div class="card-body">
+        <%= form_with model: @speech_request || SpeechRequest.new, url: tts_path, local: true, class: "needs-validation", novalidate: true do |form| %>
+          <!-- Text Input -->
+          <div class="mb-4">
+            <label for="speech_request_text" class="form-label fw-bold">
+              <i class="fas fa-pen-alt me-2"></i>Metniniz
+            </label>
+            <%= form.text_area :text, 
+                class: "form-control form-control-lg #{'is-invalid' if @speech_request&.errors&.[](:text)}", 
+                rows: 6, 
+                placeholder: "Ses dosyasına dönüştürülmek istenen metni buraya yazın...",
+                style: "resize: vertical;",
+                required: true,
+                maxlength: 10000 %>
+            
+            <% if @speech_request&.errors&.[](:text) %>
+              <div class="invalid-feedback">
+                <%= @speech_request.errors[:text].first %>
+              </div>
+            <% end %>
+            
+            <div class="form-text">
+              <i class="fas fa-info-circle me-1"></i>
+              Maksimum 10,000 karakter. Her provider farklı sınırlara sahip olabilir.
+            </div>
+          </div>
+
+          <!-- Provider Information -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <div class="card border-success">
+                <div class="card-body text-center">
+                  <i class="fas fa-robot text-success mb-2" style="font-size: 1.5rem;"></i>
+                  <h6 class="card-title">Resemble AI</h6>
+                  <small class="text-muted">Voice cloning & custom voices</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card border-info">
+                <div class="card-body text-center">
+                  <i class="fas fa-brain text-info mb-2" style="font-size: 1.5rem;"></i>
+                  <h6 class="card-title">ElevenLabs</h6>
+                  <small class="text-muted">High-quality AI voices</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card border-warning">
+                <div class="card-body text-center">
+                  <i class="fas fa-lightning-bolt text-warning mb-2" style="font-size: 1.5rem;"></i>
+                  <h6 class="card-title">OpenAI</h6>
+                  <small class="text-muted">GPT-powered speech</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="d-grid">
+            <%= form.submit "Generate Speech Files", 
+                class: "btn btn-primary btn-lg",
+                data: { 
+                  bs_toggle: "tooltip",
+                  bs_title: "Process with all 3 providers in background"
+                } %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Requests Section -->
+<% if @recent_requests&.any? %>
+<div class="row mt-5">
+  <div class="col-12">
+    <h2 class="text-center mb-4">
+      <i class="fas fa-history text-info me-2"></i>
+      Son İstekler
+    </h2>
+  </div>
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Metin (İlk 50 karakter)</th>
+                <th>Durum</th>
+                <th>Başarılı Providers</th>
+                <th>Oluşturulma</th>
+                <th>İşlemler</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @recent_requests.each do |request| %>
+                <tr>
+                  <td>
+                    <small><%= truncate(request.text, length: 50) %></small>
+                  </td>
+                  <td>
+                    <% case request.status %>
+                    <% when 'pending' %>
+                      <span class="badge bg-secondary">Bekliyor</span>
+                    <% when 'processing' %>
+                      <span class="badge bg-warning">İşleniyor</span>
+                    <% when 'partial' %>
+                      <span class="badge bg-info">Kısmi</span>
+                    <% when 'completed' %>
+                      <span class="badge bg-success">Tamamlandı</span>
+                    <% when 'failed' %>
+                      <span class="badge bg-danger">Başarısız</span>
+                    <% when 'cancelled' %>
+                      <span class="badge bg-secondary">İptal Edildi</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <small><%= request.successful_results.size %>/3</small>
+                  </td>
+                  <td>
+                    <small><%= time_ago_in_words(request.created_at) %> önce</small>
+                  </td>
+                  <td>
+                    <%= link_to "Detay", speech_request_path(request), 
+                        class: "btn btn-sm btn-outline-primary" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% end %>
+
+<!-- Features Section -->
+<div class="row mt-5">
+  <div class="col-12">
+    <h2 class="text-center mb-4">
+      <i class="fas fa-star text-warning me-2"></i>
+      Platform Özellikleri
+    </h2>
+  </div>
+  <div class="col-md-4 mb-3">
+    <div class="card h-100 text-center">
+      <div class="card-body">
+        <i class="fas fa-cloud text-primary mb-3" style="font-size: 2rem;"></i>
+        <h5 class="card-title">3 AI Provider</h5>
+        <p class="card-text">Resemble AI, ElevenLabs ve OpenAI ile paralel işlem.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-3">
+    <div class="card h-100 text-center">
+      <div class="card-body">
+        <i class="fas fa-tasks text-success mb-3" style="font-size: 2rem;"></i>
+        <h5 class="card-title">Background Processing</h5>
+        <p class="card-text">Sidekiq ile arka plan işleme ve retry mekanizması.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-3">
+    <div class="card h-100 text-center">
+      <div class="card-body">
+        <i class="fas fa-download text-info mb-3" style="font-size: 2rem;"></i>
+        <h5 class="card-title">Secure Downloads</h5>
+        <p class="card-text">AWS S3 presigned URL'ler ile güvenli indirme.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+

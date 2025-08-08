@@ -44,7 +44,7 @@ gem "sentry-ruby", "~> 5.0"
 gem "sentry-rails", "~> 5.0"
 
 # Environment Management
-gem "dotenv-rails", "~> 2.8"
+gem "dotenv-rails", "~> 3.1"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false

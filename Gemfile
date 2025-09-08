@@ -70,7 +70,7 @@ group :development, :test do
 
   # Testing
   gem "rspec-rails", "~> 6.0"
-  gem "factory_bot_rails", "~> 6.0"
+  gem "factory_bot_rails", "~> 6.5"
   gem "webmock", "~> 3.0"
   gem "vcr", "~> 6.0"
 end

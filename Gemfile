@@ -29,7 +29,7 @@ gem "solid_queue"
 gem "solid_cable"
 
 # TTS Integration & Background Processing
-gem "sidekiq", "~> 7.0"
+gem "sidekiq", "~> 8.0"
 gem "redis", "~> 5.0"
 
 # AWS Integration

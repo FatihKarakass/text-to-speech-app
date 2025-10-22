@@ -33,7 +33,7 @@ gem "sidekiq", "~> 7.0"
 gem "redis", "~> 5.0"
 
 # AWS Integration
-gem "aws-sdk-s3", "~> 1.0"
+gem "aws-sdk-s3", "~> 1.201"
 
 # HTTP Clients for TTS APIs
 gem "httparty", "~> 0.21"
